@@ -9,9 +9,15 @@ class VendaController extends Controller
 {
     public function store(Request $request)
     {
+
+        foreach($request->itens as $item){
+            echo $item;
+        }
+
         $result = Venda::create([
             'cliente_id' => $request->cliente_id,
-            'data_venda'=> 
+            'data_venda'=> date('Y:m:d H:i:s'),
+            
         ]);
 
         foreach($request->itens as $item){

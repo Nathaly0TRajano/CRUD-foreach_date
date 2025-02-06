@@ -26,7 +26,6 @@ class ProdutoUpdateFormRequest extends FormRequest
         return [
             'nome' => 'min:5|max:50',
             'codigo' => 'unique:App\Models\Produto,codigo|numeric',
-            'preco' => 'decimal:2',
             'quantidade_estoque' => 'numeric'
         ];
     }
@@ -48,7 +47,6 @@ class ProdutoUpdateFormRequest extends FormRequest
             'nome.max' => 'O campo precisar ter menos de 50 caracteres',
             'codigo.numeric' => 'O campo precisar conter apenas números',
             'codigo.unique' => 'Este código já existe',
-            'preco.decimal' => 'O campo precisa conter menos de 15 caracters antes da vírgula',
             'quantidade_estoque.numeric' => 'O campo precisar conter apenas números'
 
         ];

@@ -26,7 +26,7 @@ class ProdutoStoreFormRequest extends FormRequest
         return [
             'nome' => 'required|min:5|max:50',
             'codigo' => 'required|unique:App\Models\Produto,codigo|numeric',
-            'preco' => 'required|decimal:2',
+            'preco' => 'required',
             'quantidade_estoque' => 'required|numeric'
         ];
     }
@@ -52,7 +52,6 @@ class ProdutoStoreFormRequest extends FormRequest
             'codigo.numeric' => 'O campo precisar conter apenas números',
             'codigo.unique' => 'Este código já existe',
             'preco.required' => 'O campo é obrigatório',
-            'preco.decimal' => 'O campo precisa conter menos de 15 caracters antes da vírgula',
             'quantidade_estoque.requirerd' => 'O campo é obrigatório',
             'quantidade_estoque.numeric' => 'O campo precisar conter apenas números'
 

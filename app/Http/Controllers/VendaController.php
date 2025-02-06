@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ItemVenda;
+use App\Models\Produto;
 use App\Models\Venda;
 use Illuminate\Http\Request;
 
@@ -10,19 +12,48 @@ class VendaController extends Controller
     public function store(Request $request)
     {
 
-        foreach($request->itens as $item){
-            echo $item;
-        }
-
         $result = Venda::create([
             'cliente_id' => $request->cliente_id,
-            'data_venda'=> date('Y:m:d H:i:s'),
-            
+            'data_venda'=> date('Y-m-d H:i:s'),
+            'desconto'=>$request->desconto,
+            'subtotal'=> 0,
+            'total'=> 0
         ]);
 
+        $subtotal = 0;
         foreach($request->itens as $item){
-            echo $item;
-        };
+            $subtotal += $item['quantidade'] * $item['preco']; 
+            $produto = Produto::find($item['produto_id']);
+            if($produto->quantidade_estoque == 0){
+                return response()->json([
+                    'status'=>false,
+                    'message'=> 'Não existem produtos suficientes para sua compra.',
+                ]);
+            } 
+            $produto->quantidade_estoque =  $produto->quantidade_estoque - $item['quantidade'];
+
+            $produto->update();
+
+            $item_venda = ItemVenda::create([
+                'venda_id' => $result->id,
+                'produto_id'=> $item['produto_id'],
+                'quantidade'=> $item['quantidade'],
+                'preco_unitario' => $item['preco'],
+                'subtotal_item'=> $subtotal
+            ]);
+        }
+
+        $result->subtotal = $subtotal;
+        $result->total = $subtotal - $request->desconto; 
+        $result->update();
+
+
+        return response()->json([
+            'status'=> true,
+            'message'=> 'Venda efetuada',
+            'data'=> $result
+        ]);
+
 
         /**cadastrar a venda (cliente_id, data_venda deve ser a data e hora do sistema (sugestão, função date))
          * Percorrer os itens utilizando foreach. Ex.: foreach($request->itens as $item){ echo $item  }
@@ -34,18 +65,6 @@ class VendaController extends Controller
 
          
          }
-
-
-
-
-
-
-
-
-
-
-
-
          /*
 
 
@@ -66,8 +85,7 @@ class VendaController extends Controller
             'status' => true,
             'message' => 'Dados Cadastrados'
         ]);
-
-     } */
+  } */
     
 
     public function index()
